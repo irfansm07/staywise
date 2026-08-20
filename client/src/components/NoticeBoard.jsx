@@ -58,18 +58,26 @@ export default function NoticeBoard({ user, token }) {
         badgeType: item.isImportant ? 'urgent' : 'general'
       }));
 
-      // 4. Map complaints (anonymous)
-      const mappedComplaints = (Array.isArray(complaintsData) ? complaintsData : []).map(item => ({
-        id: `complaint-${item.id}`,
-        title: item.title,
-        content: item.description,
-        isImportant: item.priority === 'HIGH',
-        type: 'COMPLAINT',
-        author: 'Anonymous',
-        createdAt: item.createdAt,
-        badgeText: `${item.category} • ${item.status}`,
-        badgeType: item.status.toLowerCase()
-      }));
+      // 4. Map complaints with actual resident submitter info
+      const mappedComplaints = (Array.isArray(complaintsData) ? complaintsData : []).map(item => {
+        const residentName = item.resident?.name;
+        const flat = item.resident?.flatNumber;
+        const authorText = residentName 
+          ? `${residentName}${flat ? ` (Apt ${flat})` : ''}` 
+          : 'Resident';
+
+        return {
+          id: `complaint-${item.id}`,
+          title: item.title,
+          content: item.description,
+          isImportant: item.priority === 'HIGH',
+          type: 'COMPLAINT',
+          author: authorText,
+          createdAt: item.createdAt,
+          badgeText: `${item.category} • ${item.status}`,
+          badgeType: item.status.toLowerCase()
+        };
+      });
 
       // 5. Merge and sort by latest date
       const combined = [...mappedNotices, ...mappedComplaints];
@@ -136,15 +144,15 @@ export default function NoticeBoard({ user, token }) {
     const step = cardWidth + gap; // 306
     
     let points = [];
-    points.push({ x: 0, y: 25 }); // Start at left wall
+    points.push({ x: 0, y: 14 }); // Start at left wall higher up
     
     for (let i = 0; i < count; i++) {
       const cardCenter = padding + i * step + cardWidth / 2;
-      points.push({ x: cardCenter, y: 62 }); // Weight of notice pulls thread down to y=62
+      points.push({ x: cardCenter, y: 44 }); // Sag down to y=44 right at the pushpin head
     }
     
     const totalWidth = padding * 2 + count * step - gap;
-    points.push({ x: totalWidth, y: 25 }); // End at right wall
+    points.push({ x: totalWidth, y: 14 }); // End at right wall
     
     let d = `M ${points[0].x} ${points[0].y}`;
     for (let i = 0; i < points.length - 1; i++) {
@@ -152,11 +160,9 @@ export default function NoticeBoard({ user, token }) {
       const p1 = points[i + 1];
       const midX = (p0.x + p1.x) / 2;
       
-      // Control Y determines how high the string curves back up
-      // First and last segments go from wall to pin. The rest go pin to pin.
-      let controlY = 20;
+      let controlY = 12;
       if (i > 0 && i < points.length - 2) {
-        controlY = -10; // Curves higher up between adjacent cards
+        controlY = -12; // Curves upward between adjacent pins
       }
       
       d += ` Q ${midX} ${controlY} ${p1.x} ${p1.y}`;

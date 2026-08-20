@@ -87,20 +87,21 @@ router.get('/resident/list', authenticateJWT, requireRole('RESIDENT'), async (re
   }
 });
 
-// GET /api/complaints/public/list (Resident & Admin, Anonymous)
+// GET /api/complaints/public/list (Resident & Admin, Notice Board feed)
 router.get('/public/list', authenticateJWT, async (req, res) => {
   try {
     const complaints = await prisma.complaint.findMany({
-      select: {
-        id: true,
-        title: true,
-        category: true,
-        description: true,
-        photoUrl: true,
-        priority: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true
+      include: {
+        resident: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            flatNumber: true,
+            apartmentName: true,
+            societyName: true,
+          }
+        }
       },
       orderBy: { createdAt: 'desc' }
     });
