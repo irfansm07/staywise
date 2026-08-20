@@ -89,32 +89,29 @@
   padding: 0;
 }
 
-body {
+html, body {
   font-family: var(--font-sans);
   background-color: var(--bg-color);
   background-image: var(--bg-gradient);
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.5;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  width: 100%;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom Scrollbar */
+/* Hide all scrollbars globally for native mobile app experience */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
-::-webkit-scrollbar-track {
-  background: var(--bg-color);
-}
-::-webkit-scrollbar-thumb {
-  background: #C8B898;
-  border-radius: 4px;
-  box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #249D8F;
+
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 a {
@@ -423,7 +420,7 @@ button, input, select, textarea {
     gap: 10px !important;
     align-items: stretch !important;
     text-align: left !important;
-    padding: 10px 16px 8px 16px !important;
+    padding: 10px 10px 6px 10px !important;
   }
   
 

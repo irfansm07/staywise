@@ -187,18 +187,18 @@ export default function App() {
       
       {/* Frosted Navigation Header */}
       <header className="header-layout" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'stretch' }}>
-        {/* Row 1: Centered Logo & Far-Right Profile Controls */}
+        {/* Row 1: Centered Logo & Flush Right Profile Controls */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', position: 'relative' }}>
-          {/* Left Column Spacer (matches right controls width for true center alignment) */}
-          <div style={{ minWidth: '80px', flexShrink: 0 }}></div>
+          {/* Left Column Spacer */}
+          <div style={{ width: '72px', flexShrink: 0 }}></div>
 
           {/* Center Column: StayWise Logo */}
           <div style={{ flex: '1', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <StayWiseLogo />
           </div>
 
-          {/* Profile / Actions - Far Right Corner */}
-          <div style={{ minWidth: '80px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px', flexShrink: 0, position: 'relative' }}>
+          {/* Profile / Actions - Flush Right Corner */}
+          <div style={{ width: '72px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px', flexShrink: 0, position: 'relative' }}>
           {/* Theme Toggler */}
           <button
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
