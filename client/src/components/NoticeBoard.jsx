@@ -27,23 +27,18 @@ export default function NoticeBoard({ user, token }) {
   const fetchNotices = async () => {
     setLoading(true);
     try {
-      // 1. Fetch admin notices
-      const noticesRes = await fetch(`${API_BASE_URL}/api/notices/list`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      let noticesData = [];
-      if (noticesRes.ok) {
-        noticesData = await noticesRes.json();
-      }
+      // 1 & 2. Fetch admin notices & public complaints concurrently in parallel!
+      const [noticesRes, complaintsRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/notices/list`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch(`${API_BASE_URL}/api/complaints/public/list`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+      ]);
 
-      // 2. Fetch public complaints (anonymous)
-      const complaintsRes = await fetch(`${API_BASE_URL}/api/complaints/public/list`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      let complaintsData = [];
-      if (complaintsRes.ok) {
-        complaintsData = await complaintsRes.json();
-      }
+      let noticesData = noticesRes.ok ? await noticesRes.json() : [];
+      let complaintsData = complaintsRes.ok ? await complaintsRes.json() : [];
 
       // 3. Map notices
       const mappedNotices = (Array.isArray(noticesData) ? noticesData : []).map(item => ({

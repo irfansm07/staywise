@@ -18,28 +18,24 @@ router.get('/dashboard', authenticateJWT, requireRole('ADMIN'), async (req, res)
     const overdueThresholdDate = new Date();
     overdueThresholdDate.setDate(overdueThresholdDate.getDate() - thresholdDays);
 
-    // 1. Group by status
-    const statusGroups = await prisma.complaint.groupBy({
-      by: ['status'],
-      _count: { id: true }
-    });
-
-    // 2. Group by category
-    const categoryGroups = await prisma.complaint.groupBy({
-      by: ['category'],
-      _count: { id: true }
-    });
-
-    // 3. Count overdue
-    const overdueCount = await prisma.complaint.count({
-      where: {
-        status: { not: 'RESOLVED' },
-        createdAt: { lt: overdueThresholdDate }
-      }
-    });
-
-    // 4. Total complaints
-    const totalCount = await prisma.complaint.count();
+    // 1-4. Run all statistical DB queries concurrently in 1 parallel trip!
+    const [statusGroups, categoryGroups, overdueCount, totalCount] = await Promise.all([
+      prisma.complaint.groupBy({
+        by: ['status'],
+        _count: { id: true }
+      }),
+      prisma.complaint.groupBy({
+        by: ['category'],
+        _count: { id: true }
+      }),
+      prisma.complaint.count({
+        where: {
+          status: { not: 'RESOLVED' },
+          createdAt: { lt: overdueThresholdDate }
+        }
+      }),
+      prisma.complaint.count()
+    ]);
 
     // Zero-pad expected statuses
     const statusCounts = {

@@ -8,6 +8,22 @@ const { sendEmail } = require('../config/mail');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'society_management_super_secret_key_12345';
 
+// Helper: Sign JWT with full user claims to eliminate DB latency
+function signUserToken(userObj) {
+  return jwt.sign({
+    id: userObj.id,
+    email: userObj.email,
+    name: userObj.name,
+    role: userObj.role,
+    societyName: userObj.societyName,
+    apartmentName: userObj.apartmentName,
+    flatNumber: userObj.flatNumber,
+    phoneNumber: userObj.phoneNumber,
+    occupancyType: userObj.occupancyType,
+    isVerified: userObj.isVerified,
+  }, JWT_SECRET, { expiresIn: '7d' });
+}
+
 // Helper: Generate 6-digit numeric OTP
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -137,9 +153,7 @@ router.post('/verify-otp', async (req, res) => {
     }
 
     if (user.isVerified) {
-      const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
-        expiresIn: '7d',
-      });
+      const token = signUserToken(user);
       return res.json({
         token,
         user: {
@@ -175,9 +189,7 @@ router.post('/verify-otp', async (req, res) => {
       }
     });
 
-    const token = jwt.sign({ id: updatedUser.id, email: updatedUser.email, role: updatedUser.role }, JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    const token = signUserToken(updatedUser);
 
     res.json({
       token,
@@ -276,9 +288,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    const token = signUserToken(user);
 
     res.json({
       token,

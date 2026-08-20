@@ -10,6 +10,25 @@ async function authenticateJWT(req, res, next) {
   const token = authHeader.split(' ')[1];
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET || 'society_management_super_secret_key_12345');
+    
+    // Fast path: attached JWT payload contains verified user claims (0ms DB delay!)
+    if (payload && payload.id && payload.role && payload.email) {
+      req.user = {
+        id: payload.id,
+        email: payload.email,
+        name: payload.name || 'User',
+        role: payload.role,
+        societyName: payload.societyName || null,
+        apartmentName: payload.apartmentName || null,
+        flatNumber: payload.flatNumber || null,
+        phoneNumber: payload.phoneNumber || null,
+        occupancyType: payload.occupancyType || 'OWNER',
+        isVerified: payload.isVerified !== undefined ? payload.isVerified : true,
+      };
+      return next();
+    }
+
+    // Fallback path: Legacy tokens lacking complete claims
     const user = await prisma.user.findUnique({
       where: { id: payload.id },
       select: {
