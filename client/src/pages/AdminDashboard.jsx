@@ -255,7 +255,7 @@ export default function AdminDashboard({ user, token, onLogout }) {
             <h3 style={{ fontSize: '14px', fontWeight: '700', margin: 0 }}>Filter Complaints</h3>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '14px' }}>
+          <div className="filter-toolbar-grid" style={{ marginBottom: '14px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Category</label>
               <select className="input-field" style={{ padding: '8px 12px' }} value={filterCategory} onChange={e => setFilterCategory(e.target.value)}>

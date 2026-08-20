@@ -439,62 +439,67 @@ button, input, select, textarea {
     border-radius: 10px !important;
   }
 
-  /* Horizontal Swiping Square Stats Banner */
+  /* Responsive 2-column stats & metrics grid for mobile screens */
   .metrics-grid, .stats-grid {
-    display: flex !important;
-    grid-template-columns: none !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
-    gap: 12px !important;
-    padding: 6px 16px 14px 16px !important;
-    scrollbar-width: none !important; /* Hide scrollbar Firefox */
-    -webkit-overflow-scrolling: touch !important; /* Smooth inertia swipe */
-    margin: 0 -12px !important; /* Bleed edge-to-edge on mobile screens */
-  }
-  
-  .metrics-grid::-webkit-scrollbar, .stats-grid::-webkit-scrollbar {
-    display: none !important; /* Hide scrollbar Chrome/Safari */
-  }
-
-  .metrics-grid > .glass, .stats-grid > .glass {
-    flex: 0 0 135px !important; /* Explicit square widths */
-    height: 125px !important; /* Explicit square heights */
-    scroll-snap-align: start !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    text-align: center !important;
-    padding: 12px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
     box-sizing: border-box !important;
   }
-
-  /* Vertical centering inside squares */
-  .metrics-grid > .glass > div:nth-child(2), 
-  .stats-grid > .glass > div:nth-child(2) {
+  
+  .metrics-grid > .glass, .stats-grid > .glass {
+    flex: none !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 85px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 4px !important;
+    text-align: center !important;
+    padding: 12px 8px !important;
+    box-sizing: border-box !important;
   }
 
-  /* Micro-adjust labels and sizes for compact grid */
+  /* Vertical centering inside stats cards */
+  .metrics-grid > .glass > div, 
+  .stats-grid > .glass > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+  }
+
   .metrics-grid > .glass > div:nth-child(2) > div:nth-child(1),
-  .stats-grid > .glass > div:nth-child(2) > div:nth-child(1) {
+  .stats-grid > .glass > div:nth-child(2) > div:nth-child(1),
+  .stats-grid > .glass > div:nth-child(1) {
     font-size: 11px !important;
     font-weight: 600 !important;
-    color: var(--text-secondary) !important;
     white-space: nowrap !important;
   }
 
   .metrics-grid > .glass > div:nth-child(2) > div:nth-child(2),
-  .stats-grid > .glass > div:nth-child(2) > div:nth-child(2) {
+  .stats-grid > .glass > div:nth-child(2) {
     font-size: 20px !important;
     font-weight: 800 !important;
-    color: var(--text-primary) !important;
     margin-top: 2px !important;
+  }
+}
+
+.filter-toolbar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .filter-toolbar-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 
