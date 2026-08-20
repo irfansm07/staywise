@@ -344,17 +344,27 @@ button, input, select, textarea {
   position: sticky;
   top: 0;
   z-index: 900;
-  padding: 12px 32px 10px 32px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background: #E76F51;
+  background: var(--bg-color);
   border: none;
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
-[data-theme='dark'] .header-layout {
-  background: #000000;
+.header-top-row {
+  background-color: #E76F51;
+  padding: 12px 32px 10px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  min-height: 48px;
+}
+
+[data-theme='dark'] .header-top-row {
+  background-color: #000000 !important;
 }
 
 /* Neumorphic Navigation helpers */

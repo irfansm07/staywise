@@ -119,9 +119,9 @@ export default function App() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
       {/* Frosted Navigation Header */}
-      <header className="header-layout" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'stretch' }}>
-        {/* Row 1: Logo & Profile */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', position: 'relative', minHeight: '36px' }}>
+      <header className="header-layout">
+        {/* Row 1: Logo & Profile (Orange Top Bar) */}
+        <div className="header-top-row">
           {/* Left spacer for optical alignment balance */}
           <div style={{ width: '76px' }} />
 
@@ -293,8 +293,8 @@ export default function App() {
         </div> {/* Closes Profile/Actions */}
       </div> {/* Closes Row 1 wrapper */}
 
-      {/* Row 2: Tab Switcher (Broad/Centered) */}
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', borderTop: '2px solid #249D8F', paddingTop: '10px', marginTop: '4px' }}>
+      {/* Row 2: Tab Switcher (Original Cream Background) */}
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '10px 32px 12px 32px', background: 'var(--bg-color)' }}>
           <div className="neumorphic-tab-container" style={{ width: '100%', maxWidth: '600px', display: 'flex', padding: '6px', gap: '6px' }}>
             <button 
               onClick={() => setActiveTab('complaints')}
