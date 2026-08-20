@@ -121,21 +121,24 @@ export default function App() {
       {/* Frosted Navigation Header */}
       <header className="header-layout" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'stretch' }}>
         {/* Row 1: Logo & Profile */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          {/* Brand - Left Corner */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center' }}>
-            <svg width="20" height="24" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20,30 L60,30 L60,10 L25,10 C18,10 12,16 12,24 L12,48 L22,48 L22,34 L80,34 L80,104 L50,92 L20,104 L20,70 L10,70 L10,102 C10,111 18,118 26,118 L74,118 C82,118 90,111 90,102 L90,44 C90,36 84,30 76,30 L20,30 Z" fill="currentColor" />
-              <path d="M32,46 L68,54 L68,96 L32,88 Z" fill="currentColor" />
-              <circle cx="50" cy="70" r="4" fill="var(--bg-color)" />
-              <path d="M47.5,73 L52.5,73 L54,82 L46,82 Z" fill="var(--bg-color)" />
-            </svg>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', position: 'relative', minHeight: '36px' }}>
+          {/* Left spacer for optical alignment balance */}
+          <div style={{ width: '76px' }} />
+
+          {/* Brand - Centered in middle of Top Nav */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+            <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center' }}>
+              <svg width="22" height="26" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20,30 L60,30 L60,10 L25,10 C18,10 12,16 12,24 L12,48 L22,48 L22,34 L80,34 L80,104 L50,92 L20,104 L20,70 L10,70 L10,102 C10,111 18,118 26,118 L74,118 C82,118 90,111 90,102 L90,44 C90,36 84,30 76,30 L20,30 Z" fill="currentColor" />
+                <path d="M32,46 L68,54 L68,96 L32,88 Z" fill="currentColor" />
+                <circle cx="50" cy="70" r="4" fill="var(--bg-color)" />
+                <path d="M47.5,73 L52.5,73 L54,82 L46,82 Z" fill="var(--bg-color)" />
+              </svg>
+            </div>
+            <span className="brand-text" style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
+              Staywise
+            </span>
           </div>
-          <span className="brand-text" style={{ fontSize: '16px', fontWeight: '800', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
-            Staywise
-          </span>
-        </div>
 
         {/* Profile / Actions - Right Corner */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
