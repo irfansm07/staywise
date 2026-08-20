@@ -1,0 +1,65 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String      @id @default(uuid())
+  email           String      @unique
+  password        String
+  name            String
+  role            String      @default("RESIDENT") // "RESIDENT" or "ADMIN"
+  societyName     String?
+  apartmentName   String?
+  flatNumber      String?
+  phoneNumber     String?
+  occupancyType   String?     @default("OWNER")    // "OWNER" or "TENANT"
+  isVerified      Boolean     @default(false)
+  verificationOTP String?
+  otpExpiresAt    DateTime?
+  createdAt       DateTime    @default(now())
+  complaints      Complaint[]
+}
+
+model Complaint {
+  id          String    @id @default(uuid())
+  title       String
+  category    String    // e.g. "Plumbing", "Electrical", "Security", "Cleanliness", "Other"
+  description String
+  photoUrl    String?
+  priority    String    @default("MEDIUM") // "LOW", "MEDIUM", "HIGH"
+  status      String    @default("OPEN")   // "OPEN", "IN_PROGRESS", "RESOLVED"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  resident    User      @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  residentId  String
+  history     History[]
+}
+
+model History {
+  id          String    @id @default(uuid())
+  status      String
+  note        String?
+  actorName   String    // Name of user who updated (e.g. Admin or Resident name)
+  createdAt   DateTime  @default(now())
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  complaintId String
+}
+
+model Notice {
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  isImportant Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}
