@@ -226,23 +226,30 @@ export default function NoticeBoard({ user, token }) {
               ) : (
                 <div className="polaroid-carousel" ref={carouselRef} style={{ position: 'relative' }}>
                   {notices.map((notice) => {
-                    const isImportant = notice.isImportant;
+                    const isResolved = notice.badgeType === 'resolved' || notice.status === 'RESOLVED';
                     return (
                       <div 
                         key={notice.id} 
                         className="polaroid-card"
-                        style={{ marginTop: '20px' }}
+                        style={{ marginTop: '20px', position: 'relative' }}
                       >
-                        {/* Red pushpin */}
-                        <div className="polaroid-red-pushpin"></div>
+                        {/* Red pushpin for open, Green pin for resolved */}
+                        <div className={isResolved ? "polaroid-red-pushpin" : "polaroid-red-pushpin"} style={isResolved ? { backgroundColor: '#10B981', boxShadow: '0 3px 6px rgba(0,0,0,0.3)' } : {}}></div>
+                        
+                        {/* Rubber Stamp mark when resolved */}
+                        {isResolved && (
+                          <div className="polaroid-stamp-resolved">
+                            ✓ RESOLVED
+                          </div>
+                        )}
                         
                         {/* Frame contents */}
-                        <div className="polaroid-photo-frame">
+                        <div className="polaroid-photo-frame" style={isResolved ? { opacity: 0.82 } : {}}>
                           <div>
                             <span 
                               className={`polaroid-badge polaroid-badge-${notice.badgeType}`}
                               style={notice.type === 'COMPLAINT' ? { 
-                                backgroundColor: notice.badgeType === 'resolved' ? 'var(--success)' : notice.badgeType === 'in_progress' ? 'var(--warning)' : 'var(--danger)',
+                                backgroundColor: isResolved ? 'var(--success)' : notice.badgeType === 'in_progress' ? 'var(--warning)' : 'var(--danger)',
                                 fontSize: '8px'
                               } : {}}
                             >

@@ -503,6 +503,28 @@ button, input, select, textarea {
   }
 }
 
+/* Authentic Rubber Stamp Overlay for Resolved Complaints */
+.polaroid-stamp-resolved {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-14deg);
+  border: 3px double #10B981;
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.12);
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  padding: 6px 16px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25), inset 0 0 10px rgba(16, 185, 129, 0.15);
+  pointer-events: none;
+  z-index: 15;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+}
+
 @keyframes dropdownFadeIn {
   from {
     opacity: 0;
