@@ -29,10 +29,10 @@ const safeRemoveItem = (key) => {
 
 function StayWiseLogo() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
       <svg 
-        width="38" 
-        height="38" 
+        width="34" 
+        height="34" 
         viewBox="0 0 100 100" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +82,7 @@ function StayWiseLogo() {
       {/* Brand Text */}
       <span style={{ 
         fontFamily: "'Outfit', system-ui, -apple-system, sans-serif", 
-        fontSize: '26px', 
+        fontSize: '22px', 
         fontWeight: '800', 
         letterSpacing: '-0.02em', 
         color: 'var(--primary)',
