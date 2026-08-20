@@ -9,10 +9,19 @@ StayWise is a modern, high-performance web application designed for residential 
 
 ---
 
-## 🌐 Hosted Application & Live URL
+> [!IMPORTANT]
+> **📱 Mobile-First Application Notice**: StayWise is engineered primarily as a mobile web application. For the optimal user experience, please view this app on your mobile phone or use your browser's Mobile View (DevTools Device Emulation mode: 375px - 430px mobile view). Opening on ultra-wide desktop monitors may stretch or scale some mobile-optimized components.
 
+## 🌐 Hosted Application & Live Demo Credentials
+
+- **Hosted Application URL**: [https://staywise-dun.vercel.app/](https://staywise-dun.vercel.app/)
 - **GitHub Repository**: [https://github.com/irfansm07/staywise](https://github.com/irfansm07/staywise)
-- **Hosted Application (Vercel)**: Deployed on Vercel (`main` branch automated CI/CD pipeline).
+
+### 🔑 Instant Login Demo Credentials:
+| Account Type | Email Address | Password | Role Features |
+| :--- | :--- | :--- | :--- |
+| 👤 **Resident Demo** | `hii@gmail.com` | `112233` | File complaints, upload photos, track resolution timeline |
+| 🛡️ **Admin Demo** | `rimerge.online@gmail.com` | `112233` | Filter complaints, escalate priority, update status, post notices |
 
 ---
 
