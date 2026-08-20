@@ -27,6 +27,73 @@ const safeRemoveItem = (key) => {
   } catch (e) {}
 };
 
+function StayWiseLogo() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <svg 
+        width="38" 
+        height="38" 
+        viewBox="0 0 100 100" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ flexShrink: 0 }}
+      >
+        {/* Chimney */}
+        <rect x="70" y="16" width="8" height="18" rx="1.5" fill="var(--primary)" />
+
+        {/* House Roof & Body */}
+        <path 
+          d="M50 6 L90 40 H82 V82 C82 85.3 79.3 88 76 88 H24 C20.7 88 18 85.3 18 82 V40 H10 L50 6 Z" 
+          fill="var(--primary)"
+        />
+
+        {/* Attic 4-Window Grid (2x2) */}
+        <rect x="43" y="22" width="5" height="5" rx="1" fill="var(--header-bg)" />
+        <rect x="52" y="22" width="5" height="5" rx="1" fill="var(--header-bg)" />
+        <rect x="43" y="30" width="5" height="5" rx="1" fill="var(--header-bg)" />
+        <rect x="52" y="30" width="5" height="5" rx="1" fill="var(--header-bg)" />
+
+        {/* White / Header-bg Speech Bubble inside House Body */}
+        <path 
+          d="M32 44 H68 C72.4 44 76 47.6 76 52 V64 C76 68.4 72.4 72 68 72 H48 L38 80 V72 H32 C27.6 72 24 68.4 24 64 V52 C24 47.6 27.6 44 32 44 Z" 
+          fill="var(--header-bg)"
+        />
+
+        {/* 3 Dots inside Speech Bubble */}
+        <circle cx="42" cy="58" r="3" fill="var(--primary)" />
+        <circle cx="50" cy="58" r="3" fill="var(--primary)" />
+        <circle cx="58" cy="58" r="3" fill="var(--primary)" />
+
+        {/* Leaf Checkmark at Bottom Left */}
+        <path 
+          d="M8 66 C4 76 12 88 22 86 C18 76 13 70 8 66 Z" 
+          fill="var(--primary)"
+        />
+        <path 
+          d="M16 73 C13 81 19 89 26 87 C23 80 20 76 16 73 Z" 
+          fill="var(--primary)"
+        />
+        <path 
+          d="M12 60 C22 60 34 74 56 92 C70 68 88 46 100 36 C80 52 55 78 44 94 C30 80 18 66 12 60 Z" 
+          fill="var(--primary)"
+        />
+      </svg>
+
+      {/* Brand Text */}
+      <span style={{ 
+        fontFamily: "'Outfit', system-ui, -apple-system, sans-serif", 
+        fontSize: '26px', 
+        fontWeight: '800', 
+        letterSpacing: '-0.02em', 
+        color: 'var(--primary)',
+        lineHeight: '1'
+      }}>
+        StayWise
+      </span>
+    </div>
+  );
+}
+
 export default function App() {
   const [token, setToken] = useState(() => safeGetItem('token', ''));
   const [user, setUser] = useState(null);
@@ -119,25 +186,15 @@ export default function App() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
       {/* Frosted Navigation Header */}
-      <header className="header-layout">
-        {/* Row 1: Logo & Profile (Orange Top Bar) */}
-        <div className="header-top-row">
-          {/* Left spacer for optical alignment balance */}
-          <div style={{ width: '76px' }} />
+      <header className="header-layout" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'stretch' }}>
+        {/* Row 1: Centered Logo & Profile */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', width: '100%' }}>
+          {/* Left Column Spacer */}
+          <div></div>
 
-          {/* Brand - Centered in middle of Top Nav */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-            <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center' }}>
-              <svg width="22" height="26" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20,30 L60,30 L60,10 L25,10 C18,10 12,16 12,24 L12,48 L22,48 L22,34 L80,34 L80,104 L50,92 L20,104 L20,70 L10,70 L10,102 C10,111 18,118 26,118 L74,118 C82,118 90,111 90,102 L90,44 C90,36 84,30 76,30 L20,30 Z" fill="currentColor" />
-                <path d="M32,46 L68,54 L68,96 L32,88 Z" fill="currentColor" />
-                <circle cx="50" cy="70" r="4" fill="var(--bg-color)" />
-                <path d="M47.5,73 L52.5,73 L54,82 L46,82 Z" fill="var(--bg-color)" />
-              </svg>
-            </div>
-            <span className="brand-text" style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
-              Staywise
-            </span>
+          {/* Center Column: StayWise Logo */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <StayWiseLogo />
           </div>
 
         {/* Profile / Actions - Right Corner */}
@@ -293,8 +350,8 @@ export default function App() {
         </div> {/* Closes Profile/Actions */}
       </div> {/* Closes Row 1 wrapper */}
 
-      {/* Row 2: Tab Switcher (Original Cream Background) */}
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '10px 32px 12px 32px', background: 'var(--bg-color)' }}>
+      {/* Row 2: Tab Switcher (Broad/Centered) */}
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', borderTop: '2px solid #249D8F', paddingTop: '10px', marginTop: '4px' }}>
           <div className="neumorphic-tab-container" style={{ width: '100%', maxWidth: '600px', display: 'flex', padding: '6px', gap: '6px' }}>
             <button 
               onClick={() => setActiveTab('complaints')}

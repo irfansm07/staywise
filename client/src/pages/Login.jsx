@@ -392,12 +392,21 @@ export default function Login({ onLoginSuccess }) {
                 marginBottom: '20px',
                 color: '#249D8F'
               }}>
-                {/* Staywise door-S logo */}
-                <svg width="40" height="48" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20,30 L60,30 L60,10 L25,10 C18,10 12,16 12,24 L12,48 L22,48 L22,34 L80,34 L80,104 L50,92 L20,104 L20,70 L10,70 L10,102 C10,111 18,118 26,118 L74,118 C82,118 90,111 90,102 L90,44 C90,36 84,30 76,30 L20,30 Z" fill="currentColor" />
-                  <path d="M32,46 L68,54 L68,96 L32,88 Z" fill="currentColor" />
-                  <circle cx="50" cy="70" r="4" fill="var(--bg-color)" />
-                  <path d="M47.5,73 L52.5,73 L54,82 L46,82 Z" fill="var(--bg-color)" />
+                {/* Staywise house-speechbubble-leaf checkmark logo */}
+                <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="70" y="16" width="8" height="18" rx="1.5" fill="currentColor" />
+                  <path d="M50 6 L90 40 H82 V82 C82 85.3 79.3 88 76 88 H24 C20.7 88 18 85.3 18 82 V40 H10 L50 6 Z" fill="currentColor" />
+                  <rect x="43" y="22" width="5" height="5" rx="1" fill="var(--bg-color)" />
+                  <rect x="52" y="22" width="5" height="5" rx="1" fill="var(--bg-color)" />
+                  <rect x="43" y="30" width="5" height="5" rx="1" fill="var(--bg-color)" />
+                  <rect x="52" y="30" width="5" height="5" rx="1" fill="var(--bg-color)" />
+                  <path d="M32 44 H68 C72.4 44 76 47.6 76 52 V64 C76 68.4 72.4 72 68 72 H48 L38 80 V72 H32 C27.6 72 24 68.4 24 64 V52 C24 47.6 27.6 44 32 44 Z" fill="var(--bg-color)" />
+                  <circle cx="42" cy="58" r="3" fill="currentColor" />
+                  <circle cx="50" cy="58" r="3" fill="currentColor" />
+                  <circle cx="58" cy="58" r="3" fill="currentColor" />
+                  <path d="M8 66 C4 76 12 88 22 86 C18 76 13 70 8 66 Z" fill="currentColor" />
+                  <path d="M16 73 C13 81 19 89 26 87 C23 80 20 76 16 73 Z" fill="currentColor" />
+                  <path d="M12 60 C22 60 34 74 56 92 C70 68 88 46 100 36 C80 52 55 78 44 94 C30 80 18 66 12 60 Z" fill="currentColor" />
                 </svg>
               </div>
 
