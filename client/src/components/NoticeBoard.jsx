@@ -129,44 +129,7 @@ export default function NoticeBoard({ user, token }) {
     }
   };
 
-  const getThreadPath = () => {
-    const count = notices.length;
-    if (count === 0) return { d: "", width: 0 };
-    
-    const padding = 60;
-    const cardWidth = 270;
-    const gap = 36;
-    const step = cardWidth + gap; // 306
-    
-    let points = [];
-    points.push({ x: 0, y: 14 }); // Start at left wall higher up
-    
-    for (let i = 0; i < count; i++) {
-      const cardCenter = padding + i * step + cardWidth / 2;
-      points.push({ x: cardCenter, y: 44 }); // Sag down to y=44 right at the pushpin head
-    }
-    
-    const totalWidth = padding * 2 + count * step - gap;
-    points.push({ x: totalWidth, y: 14 }); // End at right wall
-    
-    let d = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[i];
-      const p1 = points[i + 1];
-      const midX = (p0.x + p1.x) / 2;
-      
-      let controlY = 12;
-      if (i > 0 && i < points.length - 2) {
-        controlY = -12; // Curves upward between adjacent pins
-      }
-      
-      d += ` Q ${midX} ${controlY} ${p1.x} ${p1.y}`;
-    }
-    return { d, width: totalWidth };
-  };
-
   const isAdmin = user && user.role === 'ADMIN';
-  const threadData = getThreadPath();
 
   return (
     <div className={isAdmin ? "dashboard-layout" : ""} style={isAdmin ? {} : { display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
@@ -187,7 +150,36 @@ export default function NoticeBoard({ user, token }) {
             ))}
           </div>
         ) : (
-          <div className="corkboard-frame" style={{ width: '100%' }}>
+          <div className="corkboard-frame" style={{ width: '100%', position: 'relative' }}>
+            {/* Arrow indicator pointing to more pinned notices */}
+            {notices.length > 1 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'absolute', top: '12px', right: '16px', zIndex: 30 }}>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'none', mediaMinWidth: '480px' }}>
+                  {notices.length} Notices Pinned
+                </span>
+                <button 
+                  onClick={() => scrollCarousel('right')}
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    backgroundColor: '#E76F51',
+                    color: '#FFFFFF',
+                    borderRadius: '20px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.4)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                  title="View next notice"
+                >
+                  More Notices &rarr;
+                </button>
+              </div>
+            )}
+
             {/* Scroll navigation arrows (visible on desktop) */}
             {notices.length > 0 && (
               <>
@@ -201,38 +193,13 @@ export default function NoticeBoard({ user, token }) {
             )}
 
             <div className="corkboard-header-msg">
-              Only notices relevant to you are shown here.
+              Latest Notices & Announcements Pinned Below
             </div>
             
             <div className="corkboard-inner" style={{ overflow: 'hidden' }}>
               {notices.length === 0 ? (
                 <div className="polaroid-carousel" style={{ justifyContent: 'center', padding: '30px 0 40px 0', position: 'relative' }}>
-                  {/* Sagging single-curve string for empty state */}
-                  <svg 
-                    style={{ 
-                      position: 'absolute', 
-                      top: 0, 
-                      left: 0, 
-                      width: '100%', 
-                      height: '110px', 
-                      pointerEvents: 'none',
-                      zIndex: 5
-                    }}
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
-                  >
-                    <path 
-                      d="M 0,25 Q 50,99 100,25" 
-                      stroke="#dc2626" 
-                      strokeWidth="3" 
-                      vectorEffect="non-scaling-stroke"
-                      fill="none" 
-                      strokeLinecap="round"
-                      filter="drop-shadow(0px 3px 2px rgba(0,0,0,0.45))"
-                    />
-                  </svg>
-
-                  <div className="polaroid-card" style={{ marginTop: '40px', transform: 'rotate(-1deg)' }}>
+                  <div className="polaroid-card" style={{ marginTop: '20px', transform: 'rotate(-1deg)' }}>
                     {/* Red pushpin */}
                     <div className="polaroid-red-pushpin"></div>
                     
@@ -258,36 +225,15 @@ export default function NoticeBoard({ user, token }) {
                 </div>
               ) : (
                 <div className="polaroid-carousel" ref={carouselRef} style={{ position: 'relative' }}>
-                  {/* Dynamic sagging suspension string for active notices */}
-                  <svg 
-                    style={{ 
-                      position: 'absolute', 
-                      top: 0, 
-                      left: 0, 
-                      width: `${threadData.width}px`, 
-                      height: '110px', 
-                      pointerEvents: 'none',
-                      zIndex: 5
-                    }}
-                  >
-                    <path 
-                      d={threadData.d} 
-                      stroke="#dc2626" 
-                      strokeWidth="3" 
-                      fill="none" 
-                      strokeLinecap="round"
-                      filter="drop-shadow(0px 3px 2px rgba(0,0,0,0.45))"
-                    />
-                  </svg>
-
                   {notices.map((notice) => {
                     const isImportant = notice.isImportant;
                     return (
                       <div 
                         key={notice.id} 
                         className="polaroid-card"
+                        style={{ marginTop: '20px' }}
                       >
-                        {/* Red pushpin (as shown in image) */}
+                        {/* Red pushpin */}
                         <div className="polaroid-red-pushpin"></div>
                         
                         {/* Frame contents */}
