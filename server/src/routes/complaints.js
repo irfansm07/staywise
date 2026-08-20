@@ -46,9 +46,54 @@ router.post('/create', authenticateJWT, requireRole('RESIDENT'), upload.single('
         }
       },
       include: {
-        history: true
+        history: true,
+        resident: true
       }
     });
+
+    // 1. Send confirmation email to Resident
+    if (req.user.email) {
+      const resSubject = `Ticket Confirmation: "${title}" (Ref #${complaint.id.substring(0, 8)})`;
+      const resHtml = `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #1f2937; max-width: 560px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
+          <h2 style="color: #249D8F; margin-top: 0;">Complaint Logged Successfully</h2>
+          <p>Hello <strong>${req.user.name}</strong>,</p>
+          <p style="color: #4b5563;">Your maintenance complaint has been logged and assigned to the management team.</p>
+          <div style="background-color: #f0fdf4; border-left: 4px solid #249D8F; padding: 16px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 15px;"><strong>Title:</strong> ${title}</p>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #4b5563;"><strong>Category:</strong> ${category}</p>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #4b5563;"><strong>Status:</strong> <span style="color: #249D8F; font-weight: bold;">OPEN</span></p>
+          </div>
+          <p style="font-size: 13px; color: #6b7280;">You will receive email notifications whenever an admin updates the status of your ticket.</p>
+          <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 20px 0;" />
+          <p style="font-size: 11px; color: #9ca3af; text-align: center;">Staywise Society Management System</p>
+        </div>
+      `;
+      sendEmail({ to: req.user.email, subject: resSubject, html: resHtml }).catch(err => console.error('Resident creation email error:', err));
+    }
+
+    // 2. Alert Admins via Email
+    prisma.user.findMany({ where: { role: 'ADMIN' }, select: { email: true, name: true } })
+      .then(admins => {
+        admins.forEach(admin => {
+          const adminSubject = `🚨 New Maintenance Complaint Filed: ${title}`;
+          const adminHtml = `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #1f2937; max-width: 560px; margin: 0 auto; border: 1px solid #fee2e2; border-radius: 12px; background-color: #ffffff;">
+              <h2 style="color: #e76f51; margin-top: 0;">New Maintenance Ticket</h2>
+              <p>Hello <strong>${admin.name}</strong>,</p>
+              <p>A new maintenance complaint has been filed by resident <strong>${req.user.name}</strong> (${req.user.flatNumber || 'Flat'}, ${req.user.apartmentName || 'Building'}).</p>
+              <div style="background-color: #fff5f5; border-left: 4px solid #e76f51; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0; font-weight: bold; font-size: 16px; color: #1f2937;">${title}</p>
+                <p style="margin: 6px 0; font-size: 13px; color: #4b5563;">Category: ${category} | Priority: MEDIUM</p>
+                <p style="margin: 10px 0 0 0; font-size: 13px; color: #374151;">"${description}"</p>
+              </div>
+              <p style="font-size: 13px; color: #6b7280;">Please log into the Admin Dashboard to review and manage this ticket.</p>
+            </div>
+          `;
+          sendEmail({ to: admin.email, subject: adminSubject, html: adminHtml }).catch(err => console.error('Admin alert email error:', err));
+        });
+      })
+      .catch(err => console.error('Fetch admins error:', err));
 
     res.status(201).json(complaint);
   } catch (error) {
@@ -276,7 +321,11 @@ router.patch('/update-priority/:id', authenticateJWT, requireRole('ADMIN'), asyn
   }
 
   try {
-    const complaint = await prisma.complaint.findUnique({ where: { id } });
+    const complaint = await prisma.complaint.findUnique({
+      where: { id },
+      include: { resident: true }
+    });
+
     if (!complaint) {
       return res.status(404).json({ error: 'Complaint not found' });
     }
@@ -301,6 +350,24 @@ router.patch('/update-priority/:id', authenticateJWT, requireRole('ADMIN'), asyn
         history: { orderBy: { createdAt: 'asc' } }
       }
     });
+
+    // Send Priority Escalation Email to Resident
+    if (complaint.resident && complaint.resident.email) {
+      const emailSubject = `Priority Escalation: "${complaint.title}" set to ${priority}`;
+      const emailHtml = `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #1f2937; max-width: 560px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
+          <h2 style="color: #e9c46a; margin-top: 0;">Ticket Priority Updated</h2>
+          <p>Hello <strong>${complaint.resident.name}</strong>,</p>
+          <p>The priority level for your maintenance complaint <strong>"${complaint.title}"</strong> has been updated by the society admin.</p>
+          <div style="background-color: #fefce8; border-left: 4px solid #e9c46a; padding: 16px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 15px;"><strong>New Priority:</strong> <span style="color: #b45309; font-weight: bold;">${priority}</span></p>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #4b5563;">Status: ${complaint.status}</p>
+          </div>
+          <p style="font-size: 13px; color: #6b7280;">Log in to the Staywise portal anytime to check resolution updates.</p>
+        </div>
+      `;
+      sendEmail({ to: complaint.resident.email, subject: emailSubject, html: emailHtml }).catch(err => console.error('Priority email error:', err));
+    }
 
     res.json(updatedComplaint);
   } catch (error) {
