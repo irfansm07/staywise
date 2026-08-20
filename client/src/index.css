@@ -50,18 +50,18 @@
 }
 
 [data-theme='dark'] {
-  --bg-color: #000000;
-  --bg-gradient: #000000;
-  --card-bg: #0A0A0A;
-  --card-bg-solid: #0A0A0A;
-  --card-glow: rgba(0, 0, 0, 0.8);
-  --border-color: #1A1A1A;
+  --bg-color: #11201E;
+  --bg-gradient: linear-gradient(135deg, #11201E 0%, #0A1614 100%);
+  --card-bg: #11201E;
+  --card-bg-solid: #11201E;
+  --card-glow: rgba(0, 0, 0, 0.6);
+  --border-color: #1C3633;
   --border-hover: #2EC4B3;
-  --border-glow: rgba(46, 196, 179, 0.3);
+  --border-glow: rgba(36, 157, 143, 0.3);
   
-  --text-primary: #FFFFFF;
-  --text-secondary: #A0A0A0;
-  --text-muted: #666666;
+  --text-primary: #FDF0D5;
+  --text-secondary: #8ABFB7;
+  --text-muted: #6D8684;
   
   --primary: #2EC4B3;
   --primary-hover: #3DD8C7;
@@ -72,8 +72,8 @@
   --accent-bg: rgba(233, 196, 106, 0.12);
   --accent-text: #E9C46A;
 
-  --shadow-dark: #000000;
-  --shadow-light: #1A1A1A;
+  --shadow-dark: #080E0D;
+  --shadow-light: #1A3230;
 
   --success: #2EC4B3;
   --success-bg: rgba(46, 196, 179, 0.1);
@@ -364,7 +364,7 @@ button, input, select, textarea {
 }
 
 [data-theme='dark'] .header-top-row {
-  background-color: #000000 !important;
+  background-color: var(--bg-color) !important;
 }
 
 /* Neumorphic Navigation helpers */
