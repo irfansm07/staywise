@@ -11,7 +11,7 @@ async function authenticateJWT(req, res, next) {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET || 'society_management_super_secret_key_12345');
     
-    // Fast path: attached JWT payload contains verified user claims (0ms DB delay!)
+    // Verify token claims directly to save DB query time
     if (payload && payload.id && payload.role && payload.email) {
       req.user = {
         id: payload.id,

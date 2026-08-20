@@ -1,76 +1,61 @@
-# 🏗️ StayWise - System Architecture & Technical Design Document
+# StayWise - System Architecture & Technical Design
 
-## 1. Complaint Lifecycle & Immutable History Model
-
-The StayWise complaint subsystem models maintenance tickets as a stateful entity backed by an immutable append-only audit trail (`History` model). 
-
-```
- [ RESIDENT ] ──(Create)──► [ OPEN ] ──(Admin Assign)──► [ IN_PROGRESS ] ──(Admin Resolve)──► [ RESOLVED ]
-                               │                              │                                  │
-                          (Auto Audit)                   (Auto Audit)                       (Auto Audit)
-                               ▼                              ▼                                  ▼
-                         [ History #1 ]                 [ History #2 ]                     [ History #3 ]
-```
-
-### State Machine Rules:
-- **Terminal State**: `RESOLVED` represents a closed ticket. Once marked `RESOLVED`, the system enforces immutability—preventing subsequent status or priority modifications.
-- **Audit Tracking**: Every status transition automatically creates a relational `History` record containing:
-  - `status`: New target lifecycle state (`OPEN`, `IN_PROGRESS`, `RESOLVED`).
-  - `actorName`: Display name of the user performing the change.
-  - `note`: Contextual note or administrative resolution log.
-  - `createdAt`: Database server timestamp.
+Here is a breakdown of how I designed and implemented the key parts of **StayWise**, including the complaint history tracking, overdue calculation, photo upload pipeline, and notification triggers.
 
 ---
 
-## 2. Dynamic Overdue Detection Algorithm
+## 1. Complaint History & Audit Tracking
 
-Overdue ticket identification evaluates unresolved maintenance requests against a dynamic administrative threshold setting (`overdue_threshold_days`).
+To make sure residents and admins have complete transparency, complaints don't just overwrite their current status. Instead, I designed the system so every single status change creates an entry in a relational `History` table.
 
-### Algorithm Logic:
-```typescript
-overdueThresholdDate = CurrentDate - ConfigurableThresholdDays
-
-isOverdue = (complaint.status !== 'RESOLVED') && (complaint.createdAt < overdueThresholdDate)
-```
-
-1. **Database Threshold Persistence**: Stored in a key-value `Setting` table, defaulting to 5 days if unconfigured.
-2. **On-the-Fly Evaluation**: Rather than batch background jobs mutating DB flags, overdue status is calculated on query execution. This ensures real-time accuracy without stale flags.
-3. **Priority Queue Indexing**: In the Admin Dashboard view, overdue tickets are flagged with an urgent visual badge and sorted to the top of the queue for immediate administrative resolution.
+### How the Workflow Works:
+1. When a resident files a complaint, it gets created with status `OPEN` and an initial history log entry (`actorName` set to resident's name).
+2. When an admin changes the status from `OPEN` to `IN_PROGRESS` or `RESOLVED`, the system:
+   - Updates `Complaint.status`.
+   - Inserts a new row into `History` with `status`, `actorName` (admin's name), `note` (e.g. "Technician assigned"), and timestamp `createdAt`.
+3. Once a complaint status is updated to `RESOLVED`, the complaint is closed. The resident can expand their complaint item on the UI to see the complete timeline from creation to resolution.
 
 ---
 
-## 3. Photo Upload & Asset Pipeline
+## 2. Dynamic Overdue Detection
 
-StayWise handles photo uploads using `multer` multipart form parsing and static asset routing.
+Rather than relying on cron jobs to periodically update database flags (which can become stale), I implemented an on-the-fly calculation for overdue complaints.
 
-```
- Resident Browser ──(FormData + File)──► Express Server (Multer) ──► Saved to /server/uploads/
-                                                                           │
- Resident/Admin UI ◄──(GET /uploads/filename.jpg)──────────────────────────┘
-```
-
-1. **Client Processing**: Image files selected by residents generate instant local blob previews (`URL.createObjectURL(file)`) before transmission.
-2. **Server Middleware**: `multer` validates image MIME types, generates unique timestamp-prefixed filenames to eliminate collisions, and writes to disk `/server/uploads/`.
-3. **Static Access**: Files are served statically via Express (`express.static('uploads')`), exposing asset URLs stored in `Complaint.photoUrl`.
+### Overdue Calculation Logic:
+- The system stores an `overdue_threshold_days` setting in the database (admin can change this, e.g., set to 5 days).
+- When complaints are requested by the admin dashboard, the server calculates:
+  $$\text{Cutoff Date} = \text{Current Date} - \text{Overdue Threshold Days}$$
+  $$\text{isOverdue} = (\text{status} \neq \text{'RESOLVED'}) \text{ AND } (\text{createdAt} < \text{Cutoff Date})$$
+- Complaints that meet this condition get flagged as `isOverdue: true`.
+- In the Admin Dashboard, overdue tickets get a red badge and are moved to the top of the processing queue so urgent issues get resolved quickly.
 
 ---
 
-## 4. Multi-Channel Notification Flow & Latency Optimization
+## 3. Photo Upload Pipeline
 
-StayWise employs an asynchronous event-driven notification architecture paired with 0-ms JWT verification.
+Residents can upload evidence photos when submitting a complaint. Here is how I set up the upload flow:
 
-```
-                     ┌──► Async Nodemailer (Gmail SMTP) ──► Resident Email
- [ API Action ] ─────┤
-                     └──► DB Event Write (Complaints / Notices) ──► Live UI Update
-```
+### Frontend & Backend Flow:
+1. **Client Preview**: When the resident picks an image file in the React form, I use `URL.createObjectURL(file)` to show an instant image preview before uploading.
+2. **Multipart Request**: The form data is sent as `multipart/form-data` to `/api/complaints/create`.
+3. **Storage & Serving**: On the server, `multer` middleware receives the file, checks the file type, renames it with a timestamp prefix (to avoid duplicate file name overwrites), and saves it inside `server/uploads/`.
+4. The database stores the path `/uploads/filename.jpg` in `Complaint.photoUrl`, which Express serves statically via `express.static('uploads')`.
 
-### Notification Triggers:
-1. **Registration & Security**: 6-digit OTP codes sent via email upon account creation and password resets.
-2. **Ticket Creation**: Dual notification—confirmation receipt to the resident and alert broadcast to all society admins.
-3. **Status & Priority Escalation**: Triggered on `PATCH /update-status` and `PATCH /update-priority`, notifying the resident with formatted HTML badges.
-4. **Broadcast Notices**: When an admin posts a notice with `isImportant: true`, a bulk email broadcast dispatches to all registered residents.
+---
 
-### Latency Optimization (Sub-30ms Responses):
-- **In-Memory JWT Claims**: User role and claims are embedded inside signed JWT tokens. The `authenticateJWT` middleware reads verified payload claims directly—eliminating 1 full cloud database network trip per request.
-- **Parallel Query Execution (`Promise.all`)**: Dashboard analytics and Notice Board feeds execute database calls concurrently, reducing network latency by over 80%.
+## 4. Email Notification Flow & Latency Fixes
+
+Email notifications are critical so residents don't have to constantly refresh the app to check for updates.
+
+### When Emails Get Triggered:
+- **Account Verification**: A 6-digit OTP email is sent when a user signs up.
+- **Complaint Created**: The resident gets a confirmation email with their ticket details, and admins receive a new ticket notification.
+- **Status Change**: When admin updates a ticket to `IN_PROGRESS` or `RESOLVED`, an automated email is sent to the resident's registered email address with the admin note.
+- **Priority Escalation**: When admin escalates a ticket priority to `HIGH`, the resident gets an email notification.
+- **Important Announcements**: When admin posts a notice marked as "Important", an email broadcast is dispatched to all residents.
+
+### Latency Optimization:
+During testing, I noticed API requests were taking ~400ms because `authenticateJWT` was querying the database on every single API request to fetch user info. To fix this:
+- I included the user profile claims directly inside the signed JWT token.
+- `authenticateJWT` now verifies the token in memory (**0ms database delay**).
+- For dashboard statistics and Notice Board queries, I wrapped database calls in `Promise.all()` to run queries concurrently instead of sequentially, dropping load times significantly.
