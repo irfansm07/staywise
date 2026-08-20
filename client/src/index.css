@@ -2,47 +2,42 @@
 
 :root {
   --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --header-bg: #FDF0D5;
-  --header-text: #1A332F;
-  --header-shadow-dark: #D5C8A8;
-  --header-shadow-light: #ffffff;
-
-  --bg-color: #E76F51;
-  --bg-gradient: linear-gradient(135deg, #E76F51 0%, #D85F42 100%);
-  --card-bg: #E76F51;
-  --card-bg-solid: #E76F51;
+  --bg-color: #FDF0D5;
+  --bg-gradient: linear-gradient(135deg, #FDF0D5 0%, #F7EBCE 100%);
+  --card-bg: #FDF0D5;
+  --card-bg-solid: #FDF0D5;
   --card-glow: rgba(255, 255, 255, 0.45);
-  --border-color: rgba(255, 255, 255, 0.25);
-  --border-hover: #FFFFFF;
-  --border-glow: rgba(255, 255, 255, 0.3);
+  --border-color: #E8D9B8;
+  --border-hover: #249D8F;
+  --border-glow: rgba(36, 157, 143, 0.2);
   
-  --text-primary: #FFFFFF;
-  --text-secondary: #FFEAE4;
-  --text-muted: #F8B4A4;
+  --text-primary: #1A332F;
+  --text-secondary: #5A7A74;
+  --text-muted: #8A7D68;
   
   --primary: #249D8F;
   --primary-hover: #1D8276;
-  --primary-glow: rgba(36, 157, 143, 0.25);
+  --primary-glow: rgba(36, 157, 143, 0.12);
   
-  --accent: #F4A261;
-  --accent-hover: #E76F51;
-  --accent-bg: rgba(244, 162, 97, 0.25);
-  --accent-text: #FFFFFF;
+  --accent: #E9C46A;
+  --accent-hover: #D4AD4E;
+  --accent-bg: rgba(233, 196, 106, 0.15);
+  --accent-text: #7A6520;
   
   --success: #249D8F;
-  --success-bg: rgba(36, 157, 143, 0.25);
-  --warning: #F4A261;
-  --warning-bg: rgba(244, 162, 97, 0.25);
-  --danger: #7F1D1D;
-  --danger-bg: rgba(127, 29, 29, 0.25);
+  --success-bg: rgba(36, 157, 143, 0.12);
+  --warning: #D4A843;
+  --warning-bg: rgba(233, 196, 106, 0.15);
+  --danger: #E76F51;
+  --danger-bg: rgba(231, 111, 81, 0.12);
   --info: #249D8F;
-  --info-bg: rgba(36, 157, 143, 0.2);
+  --info-bg: rgba(36, 157, 143, 0.08);
   
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   
-  --shadow-dark: #C4553B;
-  --shadow-light: #FF8967;
+  --shadow-dark: #D5C8A8;
+  --shadow-light: #ffffff;
   
   --shadow-sm: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
   --shadow-md: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
@@ -55,17 +50,12 @@
 }
 
 [data-theme='dark'] {
-  --header-bg: #000000;
-  --header-text: #FDF0D5;
-  --header-shadow-dark: #000000;
-  --header-shadow-light: #1A1A1A;
-
   --bg-color: #000000;
   --bg-gradient: #000000;
   --card-bg: #0A0A0A;
   --card-bg-solid: #0A0A0A;
   --card-glow: rgba(0, 0, 0, 0.8);
-  --border-color: #1F1F1F;
+  --border-color: #1A1A1A;
   --border-hover: #2EC4B3;
   --border-glow: rgba(46, 196, 179, 0.3);
   
@@ -75,22 +65,22 @@
   
   --primary: #2EC4B3;
   --primary-hover: #3DD8C7;
-  --primary-glow: rgba(46, 196, 179, 0.2);
+  --primary-glow: rgba(46, 196, 179, 0.15);
   
   --accent: #E9C46A;
   --accent-hover: #F0D080;
-  --accent-bg: rgba(233, 196, 106, 0.15);
+  --accent-bg: rgba(233, 196, 106, 0.12);
   --accent-text: #E9C46A;
 
   --shadow-dark: #000000;
-  --shadow-light: #181818;
+  --shadow-light: #1A1A1A;
 
   --success: #2EC4B3;
-  --success-bg: rgba(46, 196, 179, 0.15);
+  --success-bg: rgba(46, 196, 179, 0.1);
   --warning: #E9C46A;
-  --warning-bg: rgba(233, 196, 106, 0.15);
+  --warning-bg: rgba(233, 196, 106, 0.12);
   --danger: #E76F51;
-  --danger-bg: rgba(231, 111, 81, 0.15);
+  --danger-bg: rgba(231, 111, 81, 0.12);
 }
 
 * {
@@ -358,20 +348,19 @@ button, input, select, textarea {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background: var(--header-bg);
-  color: var(--header-text);
+  background: var(--bg-color);
   border: none;
-  box-shadow: 4px 4px 10px var(--header-shadow-dark), -4px -4px 10px var(--header-shadow-light);
+  box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
 }
 
 /* Neumorphic Navigation helpers */
 .neumorphic-tab-container {
   display: flex;
-  background: var(--header-bg);
+  background: var(--bg-color);
   padding: 5px;
   border-radius: 14px;
   gap: 6px;
-  box-shadow: inset 3px 3px 6px var(--header-shadow-dark), inset -3px -3px 6px var(--header-shadow-light);
+  box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
 }
 .neumorphic-tab-btn {
   padding: 8px 16px;
@@ -527,6 +516,12 @@ button, input, select, textarea {
 
 main {
   padding: 32px;
+  background-color: #E76F51;
+  min-height: calc(100vh - 80px);
+}
+
+[data-theme='dark'] main {
+  background-color: #000000 !important;
 }
 
 @media (max-width: 768px) {
